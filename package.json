@@ -1,0 +1,20 @@
+{
+  "name": "secrefiles",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tim S",
+  "license": "ISC",
+  "dependencies": {
+    "babel-preset-es2015": "^6.3.13",
+    "babel-register": "^6.3.13",
+    "eslint-config-defaults": "^7.1.1",
+    "q-io": "^1.13.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^4.1.6"
+  }
+}

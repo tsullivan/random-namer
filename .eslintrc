@@ -1,0 +1,7 @@
+{
+  "extends": "defaults",
+  "parser": "babel-eslint",
+  "rules": {
+    "strict": 0
+  }
+}
