@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 require('babel-register');
 
 var fs = require('q-io/fs');

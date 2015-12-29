@@ -2,9 +2,12 @@
   "name": "random-namer",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "preferGlobal": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "random-namer": "index.js"
   },
   "author": "Tim S",
   "license": "ISC",
