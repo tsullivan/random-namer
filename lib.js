@@ -7,13 +7,13 @@ export class Renamer {
     this.randomer = randomer;
   }
 
-  rename (files) {
-    if (!files.length) { // check arguments
+  rename ({files, prefix}) {
+    if (_.isEmpty(files)) { // check arguments
       console.log('File paths must be given as arguments');
       return;
     }
     // check they are files
-    Promise.all( files.map(p => this.fs.isFile(p)) )
+    Promise.all(files.map(p => this.fs.isFile(p)))
     .then((allAreFiles) => {
       if (_.contains(allAreFiles, false)) {
         throw new Error('All arguments must be files!');
@@ -21,10 +21,17 @@ export class Renamer {
       return files;
     })
     .then((files) => {
-      // rename the files
-      Promise.all(
-        files.map((p) => this.fs.list(p))
-      )
+      return Promise.all(files.map((p) => {
+        // rename the files
+        const ext = this.fs.extension(p);
+        const rs = this.randomer.generate();
+        const pre = (prefix) ? prefix + '-' : '';
+        return this.fs.rename(p, `${pre}${rs}${ext}`);
+      }));
+    })
+    .then((result) => {
+      // display the result
+      console.log(`${result.length} files renamed`);
     })
     .catch((error) => {
       // something went wrong
