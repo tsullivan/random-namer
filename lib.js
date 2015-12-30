@@ -2,32 +2,43 @@
 import _ from 'lodash';
 
 export class Renamer {
-  constructor ({fs, randomer}) {
+  constructor ({fs, rs, prefix}) {
     this.fs = fs;
-    this.randomer = randomer;
+    this.rs = rs;
+    this.prefix = (prefix) ? prefix + '-' : '';
   }
 
-  rename ({files, prefix}) {
+  attemptRename (original) {
+    const ext = this.fs.extension(original);
+    const rs = this.rs.generate();
+    const newName = `${this.prefix}${rs}${ext}`;
+    // check if new name exists already
+    return this.fs.exists()
+    .then((doesExist) => {
+      if (!doesExist) {
+        return this.fs.rename(original, newName);
+      } else {
+        return this.attemptRename(original);
+      }
+    });
+  }
+
+  rename ({files}) {
     if (_.isEmpty(files)) { // check arguments
       console.log('File paths must be given as arguments');
       return;
     }
     // check they are files
-    Promise.all(files.map(p => this.fs.isFile(p)))
-    .then((allAreFiles) => {
-      if (_.contains(allAreFiles, false)) {
+    Promise.all(files.map(f => this.fs.isFile(f)))
+    .then((isFiles) => {
+      if (_.contains(isFiles, false)) {
         throw new Error('All arguments must be files!');
       }
       return files;
     })
     .then((files) => {
-      return Promise.all(files.map((p) => {
-        // rename the files
-        const ext = this.fs.extension(p);
-        const rs = this.randomer.generate();
-        const pre = (prefix) ? prefix + '-' : '';
-        return this.fs.rename(p, `${pre}${rs}${ext}`);
-      }));
+      // rename the files
+      return Promise.all(files.map(f => this.attemptRename(f)));
     })
     .then((result) => {
       // display the result

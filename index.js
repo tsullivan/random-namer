@@ -3,18 +3,9 @@
 require('babel-register');
 
 var fs = require('q-io/fs');
-var randomstring = require('randomstring');
+var rs = require('randomstring');
 var yargs = require('yargs').argv;
 var lib = require('./lib');
 
-var renamer = new lib.Renamer({
-  fs: fs,
-  randomer: randomstring
-});
-
-if (renamer) {
-  renamer.rename({
-    files: yargs._,
-    prefix: yargs.prefix
-  });
-}
+var renamer = new lib.Renamer({ fs: fs, rs: rs, prefix: yargs.prefix });
+renamer.rename({ files: yargs._ });
