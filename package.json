@@ -4,7 +4,7 @@
   "description": "",
   "preferGlobal": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --compilers js:babel-register test.js"
   },
   "bin": {
     "random-namer": "index.js"
@@ -21,6 +21,9 @@
     "yargs": "^3.31.0"
   },
   "devDependencies": {
-    "babel-eslint": "^4.1.6"
+    "babel-eslint": "^4.1.6",
+    "mocha": "^2.3.4",
+    "sinon": "^1.17.2",
+    "sinon-as-promised": "^4.0.0"
   }
 }

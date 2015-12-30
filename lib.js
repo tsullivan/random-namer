@@ -24,9 +24,11 @@ export class Renamer {
   }
 
   rename ({files}) {
-    if (_.isEmpty(files)) { // check arguments
-      console.log('File paths must be given as arguments');
-      return;
+    let responses = [];
+
+    if (_.isEmpty(files)) {
+      // display usage and exit early
+      return Promise.resolve('Usage: random-namer [--prefix=PREFIX] file_name ...');
     }
     return Promise.all(files.map(f => {
       // check they are files
@@ -45,7 +47,7 @@ export class Renamer {
       }, []);
 
       if (!_.isEmpty(badFiles)) {
-        console.log(`Not a valid filename: ${badFiles.join(' ')}`);
+        responses.push(`Not a valid filename: ${badFiles.join(' ')}`);
       }
 
       return files.filter((f) => {
@@ -57,13 +59,9 @@ export class Renamer {
       return Promise.all(files.map(f => this.attemptRename(f)));
     })
     .then((result) => {
-      // display the result
-      console.log(`${result.length} files renamed`);
-    })
-    .catch((error) => {
-      // something went wrong
-      console.log(error.stack)
-    })
+      // return a success result message
+      return responses.concat(`${result.length} files renamed`).join('\n');
+    });
   }
 }
 
