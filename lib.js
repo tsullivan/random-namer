@@ -28,13 +28,29 @@ export class Renamer {
       console.log('File paths must be given as arguments');
       return;
     }
-    // check they are files
-    Promise.all(files.map(f => this.fs.isFile(f)))
-    .then((isFiles) => {
-      if (_.contains(isFiles, false)) {
-        throw new Error('All arguments must be files!');
+    return Promise.all(files.map(f => {
+      // check they are files
+      return this.fs.isFile(f)
+      .then(result => {
+        return { name: f, status: result };
+      })
+    }))
+    .then((statuses) => {
+      // filter out non-files
+      const badFiles = statuses.reduce((prev, curr) => {
+        if (!curr.status) {
+          prev.push(curr.name);
+        }
+        return prev;
+      }, []);
+
+      if (!_.isEmpty(badFiles)) {
+        console.log(`Not a valid filename: ${badFiles.join(' ')}`);
       }
-      return files;
+
+      return files.filter((f) => {
+        return !_.contains(badFiles, f);
+      });
     })
     .then((files) => {
       // rename the files
@@ -46,7 +62,8 @@ export class Renamer {
     })
     .catch((error) => {
       // something went wrong
-      console.log(error.message)
-    });
+      console.log(error.stack)
+    })
   }
 }
+
