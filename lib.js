@@ -16,7 +16,8 @@ export class Renamer {
     return this.fs.exists()
     .then((doesExist) => {
       if (!doesExist) {
-        return this.fs.rename(original, newName);
+        return this.fs.rename(original, newName)
+        .then(() => newName);
       } else {
         return this.attemptRename(original);
       }
@@ -56,11 +57,15 @@ export class Renamer {
     })
     .then((files) => {
       // rename the files
-      return Promise.all(files.map(f => this.attemptRename(f)));
+      return Promise.all(files.map(f => {
+        return this.attemptRename(f).then((newName) => {
+          responses.push(`${f} => ${newName}`);
+        })
+      }));
     })
     .then((result) => {
       // return a success result message
-      return responses.concat(`${result.length} files renamed`).join('\n');
+      return responses.concat(`${result.length} files random-named`).join('\n');
     });
   }
 }

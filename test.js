@@ -44,7 +44,7 @@ describe('Method', () => {
 
     return renamer.rename({ files: [ 'abc.txt'] })
     .then((result) => {
-      assert.equal(result, 'Not a valid filename: abc.txt\n0 files renamed');
+      assert.equal(result, 'Not a valid filename: abc.txt\n0 files random-named');
     });
   });
 
@@ -63,7 +63,7 @@ describe('Method', () => {
 
     return renamer.rename({ files: [ 'abc.txt'] })
     .then((result) => {
-      assert.equal(result, '1 files renamed');
+      assert.equal(result, 'abc.txt => cba.txt\n1 files random-named');
     });
   });
 
@@ -85,7 +85,7 @@ describe('Method', () => {
 
     return renamer.rename({ files: [ 'abc.txt', 'def.txt'] })
     .then((result) => {
-      assert.equal(result, 'Not a valid filename: def.txt\n1 files renamed');
+      assert.equal(result, 'Not a valid filename: def.txt\nabc.txt => cba.txt\n1 files random-named');
     });
   });
 
