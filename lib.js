@@ -65,7 +65,8 @@ export class Renamer {
     })
     .then((result) => {
       // return a success result message
-      return responses.concat(`${result.length} files random-named`).join('\n');
+      const noun = result.length === 1 ? 'file' : 'files';
+      return responses.concat(`${result.length} ${noun} random-named`).join('\n');
     });
   }
 }
