@@ -13,16 +13,29 @@ afterEach(function () {
   this.sinon.restore();
 });
 
+// quick defaults for mock data
+function mockDeps() {
+  return {
+    fs: {
+      isFile: this.sinon.stub().resolves(true),
+      exists: this.sinon.stub().resolves(false),
+      extension: this.sinon.stub().returns('.txt'),
+      rename: this.sinon.stub().resolves()
+    },
+    rs: {
+      generate: this.sinon.stub().returns('cba')
+    }
+  };
+}
+
 describe('Constructor', () => {
   it('sets prefix - empty', function () {
-    const fs = this.sinon.stub();
-    const rs = this.sinon.stub();
+    const { fs, rs } = mockDeps.call(this);
     const renamer = new Renamer({fs, rs});
     assert.equal(renamer.prefix, '');
   });
   it('sets prefix - non-empty', function () {
-    const fs = this.sinon.stub();
-    const rs = this.sinon.stub();
+    const { fs, rs } = mockDeps.call(this);
     const renamer = new Renamer({fs, rs, prefix: 'football'});
     assert.equal(renamer.prefix, 'football-');
   });
@@ -30,16 +43,8 @@ describe('Constructor', () => {
 
 describe('Method', () => {
   it('skips an invalid file', function () {
-    // mock data
-    const fs = {
-      isFile: this.sinon.stub().resolves(false),
-      exists: this.sinon.stub().resolves(false),
-      extension: this.sinon.stub().returns('.txt'),
-      rename: this.sinon.stub().resolves()
-    };
-    const rs = {
-      generate: this.sinon.stub().returns('cba')
-    };
+    const { fs, rs } = mockDeps.call(this);
+    fs.isFile = this.sinon.stub().resolves(false);
     const renamer = new Renamer({fs, rs});
 
     return renamer.rename({ files: [ 'abc.txt'] })
@@ -49,16 +54,7 @@ describe('Method', () => {
   });
 
   it('renames a single valid file', function () {
-    // mock data
-    const fs = {
-      isFile: this.sinon.stub().resolves(true),
-      exists: this.sinon.stub().resolves(false),
-      extension: this.sinon.stub().returns('.txt'),
-      rename: this.sinon.stub().resolves()
-    };
-    const rs = {
-      generate: this.sinon.stub().returns('cba')
-    };
+    const { fs, rs } = mockDeps.call(this);
     const renamer = new Renamer({fs, rs});
 
     return renamer.rename({ files: [ 'abc.txt'] })
@@ -68,19 +64,11 @@ describe('Method', () => {
   });
 
   it('renames a valid file and skips an invalid file', function () {
-    // mock data
+    const { fs, rs } = mockDeps.call(this);
     const isFile = this.sinon.stub();
     isFile.withArgs('abc.txt').resolves(true);
     isFile.withArgs('def.txt').resolves(false);
-    const fs = {
-      isFile: isFile,
-      exists: this.sinon.stub().resolves(false),
-      extension: this.sinon.stub().returns('.txt'),
-      rename: this.sinon.stub().resolves()
-    };
-    const rs = {
-      generate: this.sinon.stub().returns('cba')
-    };
+    fs.isFile = isFile;
     const renamer = new Renamer({fs, rs});
 
     return renamer.rename({ files: [ 'abc.txt', 'def.txt'] })
@@ -90,3 +78,4 @@ describe('Method', () => {
   });
 
 });
+
