@@ -14,5 +14,5 @@ renamer.rename({ files: yargs._ })
   console.log(result);
 })
 .catch(function (error) {
-  console.err(error.stack)
+  console.error(error.stack)
 });
