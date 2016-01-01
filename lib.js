@@ -8,7 +8,7 @@ export class Renamer {
     this.prefix = (prefix) ? prefix + '-' : '';
   }
 
-  attemptRename (original) {
+  attemptRename (original, responses) {
     const ext = this.fs.extension(original);
     const rs = this.rs.generate();
     const newName = `${this.prefix}${rs}${ext}`;
@@ -19,7 +19,8 @@ export class Renamer {
         return this.fs.rename(original, newName)
         .then(() => newName);
       } else {
-        return this.attemptRename(original);
+        responses.push(`Avoiding overwrite of ${newName}`);
+        return this.attemptRename(original, responses);
       }
     });
   }
@@ -58,7 +59,7 @@ export class Renamer {
     .then((files) => {
       // rename the files
       return Promise.all(files.map(f => {
-        return this.attemptRename(f).then((newName) => {
+        return this.attemptRename(f, responses).then((newName) => {
           responses.push(`${f} => ${newName}`);
         })
       }));

@@ -63,6 +63,16 @@ describe('Method', () => {
     });
   });
 
+  it('prepends prefix', function () {
+    const { fs, rs } = mockDeps.call(this);
+    const renamer = new Renamer({fs, rs, prefix: 'testo'});
+
+    return renamer.rename({ files: [ 'abc.txt'] })
+    .then((result) => {
+      assert.equal(result, 'abc.txt => testo-cba.txt\n1 file random-named');
+    });
+  });
+
   it('renames a valid file and skips an invalid file', function () {
     const { fs, rs } = mockDeps.call(this);
     const isFile = this.sinon.stub();
@@ -74,6 +84,21 @@ describe('Method', () => {
     return renamer.rename({ files: [ 'abc.txt', 'def.txt'] })
     .then((result) => {
       assert.equal(result, 'Not a valid filename: def.txt\nabc.txt => cba.txt\n1 file random-named');
+    });
+  });
+
+  it(`won't overwrite existing file`, function () {
+    const { fs, rs } = mockDeps.call(this);
+    const exists = this.sinon.stub();
+    exists.onCall(0).resolves(true);
+    exists.onCall(1).resolves(true);
+    exists.onCall(2).resolves(false);
+    fs.exists = exists;
+    const renamer = new Renamer({fs, rs});
+
+    return renamer.rename({ files: [ 'abc.txt'] })
+    .then((result) => {
+      assert.equal(result, 'Avoiding overwrite of cba.txt\nAvoiding overwrite of cba.txt\nabc.txt => cba.txt\n1 file random-named');
     });
   });
 
