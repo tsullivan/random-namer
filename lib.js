@@ -30,7 +30,10 @@ export class Renamer {
 
     if (_.isEmpty(files)) {
       // display usage and exit early
-      return Promise.resolve('Usage: random-namer [--prefix=PREFIX] file_name ...');
+      return Promise.resolve(
+        'Usage: random-namer [--prefix=PREFIX] file_name ...\n' +
+        'Example name: ' + this.rs.generate()
+      );
     }
     return Promise.all(files.map(f => {
       // check they are files
