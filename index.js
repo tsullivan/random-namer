@@ -3,16 +3,18 @@
 
 require('babel-register');
 
-var fs = require('q-io/fs');
-var rs = require('randomstring');
-var yargs = require('yargs').argv;
-var lib = require('./lib');
+const fs = require('q-io/fs');
+const rs = require('randomstring');
+const yargs = require('yargs').argv;
+const { Renamer } = require('./lib');
 
-var renamer = new lib.Renamer({ fs: fs, rs: rs, prefix: yargs.prefix });
-renamer.rename({ files: yargs._ })
-.then(function (result) {
-  console.log(result);
-})
-.catch(function (error) {
-  console.error(error.stack)
-});
+const renamer = new Renamer({ fs, rs, prefix: yargs.prefix });
+
+renamer
+  .rename({ files: yargs._ })
+  .then(function(result) {
+    console.log(result);
+  })
+  .catch(function(error) {
+    console.error(error.stack);
+  });
